@@ -91,21 +91,25 @@ const usernameAbbv = accounts => {
 };
 usernameAbbv(accounts);
 
-const calcMoneyIn = movement => {
+const calcDisplaySummary = movement => {
   const moneyIn = movement
     .filter(mov => mov > 0)
     .reduce((acc, curr) => acc + curr, 0);
   labelSumIn.textContent = `${moneyIn}€`;
-};
-calcMoneyIn(account1.movements);
 
-const calcMoneyOut = movement => {
   const moneyOut = movement
     .filter(mov => mov < 0)
     .reduce((acc, curr) => acc + curr, 0);
-    labelSumOut.textContent = `${moneyOut}€`
+  labelSumOut.textContent = `${Math.abs(moneyOut)}€`;
+
+  const interest = movement
+    .filter(mov => mov > 0)
+    .map(depos => (depos * 1.2) / 100)
+    .filter(int => int >= 1)
+    .reduce((acc, int) => acc + int, 0);
+    labelSumInterest.textContent = `${interest}€`
 };
-calcMoneyOut(account1.movements)
+calcDisplaySummary(account1.movements);
 
 const calcDisplayBalance = account => {
   const display = account.reduce((acc, curr) => acc + curr, 0);

@@ -61,7 +61,7 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayMovements = movements => {
+const calcDisplayMovements = movements => {
   containerMovements.innerHTML = '';
   movements.forEach((mov, i) => {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
@@ -78,8 +78,9 @@ const displayMovements = movements => {
     containerMovements.insertAdjacentHTML('afterbegin', element);
   });
 };
-displayMovements(account1.movements);
-const createUsername = accounts => {
+calcDisplayMovements(account1.movements);
+
+const usernameAbbv = accounts => {
   accounts.forEach(acc => {
     acc['username'] = acc.owner
       .toLowerCase()
@@ -88,12 +89,29 @@ const createUsername = accounts => {
       .join('');
   });
 };
+usernameAbbv(accounts);
 
-const usd = 1.1;
-const depositInUSD = movements
-  .filter(mov => mov > 0)
-  .map(mov => mov * usd)
-  .reduce((acc, curr) => acc + curr, 0);
+const calcMoneyIn = movement => {
+  const moneyIn = movement
+    .filter(mov => mov > 0)
+    .reduce((acc, curr) => acc + curr, 0);
+  labelSumIn.textContent = `${moneyIn}€`;
+};
+calcMoneyIn(account1.movements);
+
+const calcMoneyOut = movement => {
+  const moneyOut = movement
+    .filter(mov => mov < 0)
+    .reduce((acc, curr) => acc + curr, 0);
+    labelSumOut.textContent = `${moneyOut}€`
+};
+calcMoneyOut(account1.movements)
+
+const calcDisplayBalance = account => {
+  const display = account.reduce((acc, curr) => acc + curr, 0);
+  labelBalance.textContent = `${display}€`;
+};
+calcDisplayBalance(account1.movements);
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -107,4 +125,9 @@ const currencies = new Map([
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
+const usd = 1.1;
+const depositInUSD = movements
+  .filter(mov => mov > 0)
+  .map(mov => mov * usd)
+  .reduce((acc, curr) => acc + curr, 0);
 /////////////////////////////////////////////////

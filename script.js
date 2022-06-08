@@ -78,7 +78,6 @@ const calcDisplayMovements = movements => {
     containerMovements.insertAdjacentHTML('afterbegin', element);
   });
 };
-calcDisplayMovements(account1.movements);
 
 const usernameAbbv = accounts => {
   accounts.forEach(acc => {
@@ -91,32 +90,58 @@ const usernameAbbv = accounts => {
 };
 usernameAbbv(accounts);
 
-const calcDisplaySummary = movement => {
-  const moneyIn = movement
+const calcDisplaySummary = acc => {
+  const moneyIn = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, curr) => acc + curr, 0);
   labelSumIn.textContent = `${moneyIn}€`;
 
-  const moneyOut = movement
+  const moneyOut = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, curr) => acc + curr, 0);
   labelSumOut.textContent = `${Math.abs(moneyOut)}€`;
 
-  const interest = movement
+  const interest = acc.movements
     .filter(mov => mov > 0)
-    .map(depos => (depos * 1.2) / 100)
+    .map(depos => (depos * acc.interestRate) / 100)
     .filter(int => int >= 1)
     .reduce((acc, int) => acc + int, 0);
-    labelSumInterest.textContent = `${interest}€`
+  labelSumInterest.textContent = `${interest}€`;
 };
-calcDisplaySummary(account1.movements);
 
 const calcDisplayBalance = account => {
   const display = account.reduce((acc, curr) => acc + curr, 0);
   labelBalance.textContent = `${display}€`;
 };
-calcDisplayBalance(account1.movements);
 
+btnLogin.addEventListener('click', e => {
+  let currentAccount;
+  e.preventDefault();
+  currentAccount = accounts.find(
+    acc => acc.username === inputLoginUsername.value
+  );
+
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    containerApp.style.opacity = 100;
+
+    //display ui message
+    labelWelcome.textContent = `Welcome, ${currentAccount.owner.split(' ')[0]}`;
+
+    //clear input fields
+    inputLoginUsername.value = '';
+    inputLoginPin.value = '';
+    inputLoginPin.blur();
+    //display movements
+    calcDisplayMovements(currentAccount.movements);
+
+    //display balance
+    calcDisplayBalance(currentAccount.movements);
+
+    //display summary
+    calcDisplaySummary(currentAccount);
+    console.log(currentAccount);
+  }
+});
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -129,9 +154,4 @@ const currencies = new Map([
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
-const usd = 1.1;
-const depositInUSD = movements
-  .filter(mov => mov > 0)
-  .map(mov => mov * usd)
-  .reduce((acc, curr) => acc + curr, 0);
 /////////////////////////////////////////////////

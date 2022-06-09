@@ -161,6 +161,11 @@ btnTransfer.addEventListener('click', e => {
     currentAccount.balance >= amount &&
     receiver?.username !== currentAccount.username
   ) {
+    //clear input fields
+    inputTransferTo.value = '';
+    inputTransferAmount.value = '';
+    btnTransfer.blur();
+
     //doing the transfer
     currentAccount.movements.push(-amount);
     receiver.movements.push(amount);
@@ -170,7 +175,22 @@ btnTransfer.addEventListener('click', e => {
   }
 });
 
-/////////////////////////////////////////////////
+//close account
+btnClose.addEventListener('click', e => {
+  e.preventDefault();
+
+  if (
+    inputClosePin.value === Number(currentAccount.pin) &&
+    inputCloseUsername.value === currentAccount.username
+  ) {
+    const index = accounts.findIndex(
+      acc => acc.username === currentAccount.username
+    );
+    console.log(index);
+    accounts.splice(index, 1)
+  }
+});
+
 /////////////////////////////////////////////////
 // LECTURES
 

@@ -142,6 +142,10 @@ btnLogin.addEventListener('click', e => {
     console.log(currentAccount);
   }
 });
+
+btnTransfer.addEventListener('click', e => {
+  e.preventDefault()
+});
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES

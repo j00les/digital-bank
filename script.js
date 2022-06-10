@@ -61,9 +61,12 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const calcDisplayMovements = movements => {
+const calcDisplayMovements = (movements, sort = false) => {
   containerMovements.innerHTML = '';
-  movements.forEach((mov, i) => {
+
+  const sortMov = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  sortMov.forEach((mov, i) => {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const element = `
     <div class="movements__row">
@@ -180,26 +183,35 @@ btnClose.addEventListener('click', e => {
   e.preventDefault();
 
   if (
-    inputClosePin.value === Number(currentAccount.pin) &&
-    inputCloseUsername.value === currentAccount.username
+    inputCloseUsername.value === currentAccount.username &&
+    Number(inputClosePin.value) === currentAccount.pin
   ) {
     const index = accounts.findIndex(
       acc => acc.username === currentAccount.username
     );
     console.log(index);
-    accounts.splice(index, 1)
+    accounts.splice(index, 1);
+
+    containerApp.style.opacity = 0;
   }
 });
 
-/////////////////////////////////////////////////
-// LECTURES
+//request loan
+btnLoan.addEventListener('click', e => {
+  e.preventDefault();
 
-const currencies = new Map([
-  ['USD', 'United States dollar'],
-  ['EUR', 'Euro'],
-  ['GBP', 'Pound sterling'],
-]);
+  const amount = Number(inputLoanAmount.value);
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+    currentAccount.movements.push(amount);
+  }
+  updateUI(currentAccount);
+});
 
-const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
-
-/////////////////////////////////////////////////
+//sort order
+let sort = false;
+btnSort.addEventListener('click', e => {
+  e.preventDefault();
+  calcDisplayMovements(currentAccount.movements, !sort)
+  sort = !sort 
+ 
+});

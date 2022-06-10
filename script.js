@@ -211,7 +211,6 @@ btnLoan.addEventListener('click', e => {
 let sort = false;
 btnSort.addEventListener('click', e => {
   e.preventDefault();
-  calcDisplayMovements(currentAccount.movements, !sort)
-  sort = !sort 
- 
+  calcDisplayMovements(currentAccount.movements, !sort);
+  sort = !sort;
 });

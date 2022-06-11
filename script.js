@@ -13,9 +13,9 @@ const account1 = {
     '2020-01-28T09:15:04.904Z',
     '2020-04-01T10:17:24.185Z',
     '2020-05-08T14:11:59.604Z',
-    '2020-05-27T17:01:17.194Z',
-    '2020-07-11T23:36:17.929Z',
-    '2020-07-12T10:51:36.790Z',
+    '2022-05-26T17:01:17.194Z',
+    '2022-06-10T23:36:17.929Z',
+    '2022-06-11T10:51:36.790Z',
   ],
   currency: 'EUR',
   locale: 'pt-PT', // de-DE
@@ -59,21 +59,31 @@ const btnTransfer = document.querySelector('.form__btn--transfer');
 const btnLoan = document.querySelector('.form__btn--loan');
 const btnClose = document.querySelector('.form__btn--close');
 const btnSort = document.querySelector('.btn--sort');
-
 const inputLoginUsername = document.querySelector('.login__input--user');
 const inputLoginPin = document.querySelector('.login__input--pin');
 const inputTransferTo = document.querySelector('.form__input--to');
-const inputTransferAmount = document.querySelector('.form__input--amount');
 const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
+const inputTransferAmount = document.querySelector('.form__input--amount')
 
 const formatMovementDate = date => {
+  //calculate passed days
+  const calcDaysPassed = (date1, date2) =>
+    Math.round(Math.abs((date2 - date1) / (1000 * 60 * 60 * 24)));
+
+  const daysPassed = calcDaysPassed(new Date(), date);
+  console.log(daysPassed);
   
-  const year = date.getFullYear();
-  const day = `${date.getDate()}`.padStart(2, 0);
-  const month = `${date.getMonth() + 1}`.padStart(2, 0);
-  return `${day}/${month}/${year}`;
+  if (daysPassed === 0) return 'Today';
+  if (daysPassed === 1) return 'Yesterday';
+  if (daysPassed <= 7) return `${daysPassed} days ago`;
+  else {
+    const year = date.getFullYear();
+    const day = `${date.getDate()}`.padStart(2, 0);
+    const month = `${date.getMonth() + 1}`.padStart(2, 0);
+    return `${day}/${month}/${year}`;
+  }
 };
 
 const calcDisplayMovements = (acc, sort = false) => {
@@ -85,7 +95,7 @@ const calcDisplayMovements = (acc, sort = false) => {
 
   sortMov.forEach((mov, i) => {
     const date = new Date(acc.movementsDates[i]);
-    const displayDate = formatMovementDate(date)
+    const displayDate = formatMovementDate(date);
 
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const element = `
@@ -190,6 +200,7 @@ btnTransfer.addEventListener('click', e => {
   e.preventDefault();
 
   const amount = +inputTransferAmount.value;
+  console.log(amount);
   const receiver = accounts.find(acc => acc.username === inputTransferTo.value);
 
   if (

@@ -65,25 +65,21 @@ const inputTransferTo = document.querySelector('.form__input--to');
 const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
-const inputTransferAmount = document.querySelector('.form__input--amount')
+const inputTransferAmount = document.querySelector('.form__input--amount');
 
-const formatMovementDate = date => {
+const formatMovementDate = (date, locale) => {
   //calculate passed days
   const calcDaysPassed = (date1, date2) =>
     Math.round(Math.abs((date2 - date1) / (1000 * 60 * 60 * 24)));
 
   const daysPassed = calcDaysPassed(new Date(), date);
-  console.log(daysPassed);
-  
+
   if (daysPassed === 0) return 'Today';
   if (daysPassed === 1) return 'Yesterday';
   if (daysPassed <= 7) return `${daysPassed} days ago`;
-  else {
-    const year = date.getFullYear();
-    const day = `${date.getDate()}`.padStart(2, 0);
-    const month = `${date.getMonth() + 1}`.padStart(2, 0);
-    return `${day}/${month}/${year}`;
-  }
+
+  return new Intl.DateTimeFormat(locale).format(date)
+
 };
 
 const calcDisplayMovements = (acc, sort = false) => {
@@ -95,7 +91,7 @@ const calcDisplayMovements = (acc, sort = false) => {
 
   sortMov.forEach((mov, i) => {
     const date = new Date(acc.movementsDates[i]);
-    const displayDate = formatMovementDate(date);
+    const displayDate = formatMovementDate(date, acc.locale);
 
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const element = `
@@ -159,11 +155,11 @@ const updateUI = acc => {
   calcDisplaySummary(acc);
 };
 
+//always logged in
 let currentAccount;
-// //always logged in
-// currentAccount = account1;
-// containerApp.style.opacity = 100;
-// updateUI(currentAccount);
+currentAccount = account1;
+containerApp.style.opacity = 100;
+updateUI(currentAccount);
 
 //display ui when logged in
 btnLogin.addEventListener('click', e => {
@@ -174,16 +170,21 @@ btnLogin.addEventListener('click', e => {
 
   if (currentAccount?.pin === +inputLoginPin.value) {
     containerApp.style.opacity = 100;
+    //add time
+    const options = {
+      day: 'numeric', //time format
+      year: 'numeric',
+      month: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    };
 
-    //show date
     const now = new Date();
-    const day = `${now.getDate()}`.padStart(2, 0);
-    const month = `${now.getMonth() + 1}`.padStart(2, 0);
-    const year = now.getFullYear();
-    const hour = `${now.getHours()}`.padStart(2, 0);
-    const minutes = ` ${now.getMinutes()}`.padStart(2, 0);
-    labelDate.innerHTML = `${day}/${month}/${year} ${hour}:${minutes}`;
-    //display ui message
+    labelDate.textContent = new Intl.DateTimeFormat(
+      currentAccount.locale,
+      options
+    ).format(now);
+
     labelWelcome.textContent = `Welcome, ${currentAccount.owner.split(' ')[0]}`;
 
     //clear input fields

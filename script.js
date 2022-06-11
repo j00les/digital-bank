@@ -68,6 +68,14 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+const formatMovementDate = date => {
+  
+  const year = date.getFullYear();
+  const day = `${date.getDate()}`.padStart(2, 0);
+  const month = `${date.getMonth() + 1}`.padStart(2, 0);
+  return `${day}/${month}/${year}`;
+};
+
 const calcDisplayMovements = (acc, sort = false) => {
   containerMovements.innerHTML = '';
 
@@ -77,10 +85,7 @@ const calcDisplayMovements = (acc, sort = false) => {
 
   sortMov.forEach((mov, i) => {
     const date = new Date(acc.movementsDates[i]);
-    const year = date.getFullYear();
-    const day = `${date.getDate()}`.padStart(2, 0);
-    const month = `${date.getMonth() + 1}`.padStart(2, 0);
-    const displayDate = `${day}/${month}/${year}`;
+    const displayDate = formatMovementDate(date)
 
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const element = `

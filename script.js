@@ -78,20 +78,29 @@ const formatMovementDate = (date, locale) => {
   if (daysPassed === 1) return 'Yesterday';
   if (daysPassed <= 7) return `${daysPassed} days ago`;
 
-  return new Intl.DateTimeFormat(locale).format(date)
+  return new Intl.DateTimeFormat(locale).format(date);
+};
 
+//to format currency
+const formatValue = (value, locale, currency) => {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
 };
 
 const calcDisplayMovements = (acc, sort = false) => {
   containerMovements.innerHTML = '';
 
-  const sortMov = sort
+  const movs = sort
     ? acc.movements.slice().sort((a, b) => a - b)
     : acc.movements;
 
-  sortMov.forEach((mov, i) => {
+  movs.forEach((mov, i) => {
     const date = new Date(acc.movementsDates[i]);
     const displayDate = formatMovementDate(date, acc.locale);
+
+    const formatMov = formatValue(mov, acc.locale, acc.currency);
 
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const element = `
@@ -101,7 +110,7 @@ const calcDisplayMovements = (acc, sort = false) => {
     } ${type}</div>
           <div class="movements__date">${displayDate}</div>
 
-          <div class="movements__value">${mov.toFixed(2)}€</div>
+          <div class="movements__value">${formatMov}</div>
         </div>
       `;
 
@@ -124,24 +133,28 @@ const calcDisplaySummary = acc => {
   const moneyIn = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, curr) => acc + curr, 0);
-  labelSumIn.textContent = `${moneyIn.toFixed(2)}€`;
+  labelSumIn.textContent = formatValue(moneyIn, acc.locale, acc.currency);
 
   const moneyOut = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, curr) => acc + curr, 0);
-  labelSumOut.textContent = `${Math.abs(moneyOut).toFixed(2)}€`;
+  labelSumOut.textContent = formatValue(moneyOut, acc.locale, acc.currency);
 
   const interest = acc.movements
     .filter(mov => mov > 0)
     .map(depos => (depos * acc.interestRate) / 100)
     .filter(int => int >= 1)
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+  labelSumInterest.textContent = formatValue(
+    interest,
+    acc.locale,
+    acc.currency
+  );
 };
 
 const calcDisplayBalance = acc => {
   acc.balance = acc.movements.reduce((acc, curr) => acc + curr, 0);
-  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
+  labelBalance.textContent = formatValue(acc.balance, acc.locale, acc.currency);
 };
 
 const updateUI = acc => {
@@ -155,11 +168,40 @@ const updateUI = acc => {
   calcDisplaySummary(acc);
 };
 
-//always logged in
-let currentAccount;
-currentAccount = account1;
-containerApp.style.opacity = 100;
-updateUI(currentAccount);
+//set timer
+const logoutTimer = () => {
+  //to immediately call the function
+  const tick = () => {
+    const min = `${Math.trunc(time / 60)}`.padStart(2, '0');
+    const sec = String(time % 60).padStart(2, '0');
+
+    //in each call display every sec to UI
+    labelTimer.textContent = `${min}:${sec}`;
+
+    if (time === 0) {
+      clearInterval(timer);
+      containerApp.style.opacity = 0;
+    }
+
+    //decrement timer
+    time--;
+  };
+  //set time to 5 minutes
+  let time = 300;
+
+  // call this first
+  tick();
+
+  //call timer every second
+  const timer = setInterval(tick, 1000);
+  return timer;
+};
+
+let currentAccount, timer;
+
+// currentAccount = account1;
+// containerApp.style.opacity = 100;
+// updateUI(currentAccount);
 
 //display ui when logged in
 btnLogin.addEventListener('click', e => {
@@ -192,6 +234,9 @@ btnLogin.addEventListener('click', e => {
     inputLoginPin.value = '';
     inputLoginPin.blur();
   }
+  // clear existing timer and overwrite with new user timer
+  if (timer) clearInterval(timer);
+  timer = logoutTimer();
   // update UI
   updateUI(currentAccount);
 });
@@ -225,6 +270,10 @@ btnTransfer.addEventListener('click', e => {
 
     //display UI
     updateUI(currentAccount);
+
+    //reset timer
+    clearInterval(timer);
+    timer = logoutTimer();
   }
 });
 
@@ -252,12 +301,20 @@ btnLoan.addEventListener('click', e => {
 
   const amount = Math.floor(+inputLoanAmount.value);
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
-    currentAccount.movements.push(amount);
+    setTimeout(() => {
+      //get loan
+      currentAccount.movements.push(amount);
 
-    // add loan date
-    currentAccount.movementsDates.push(new Date().toISOString());
+      //add loan date
+      currentAccount.movementsDates.push(new Date().toISOString());
+
+      //update ui
+      updateUI(currentAccount);
+    }, 2000);
   }
-  updateUI(currentAccount);
+  //reset timer
+  clearInterval(timer);
+  timer = logoutTimer();
 });
 
 //sort order

@@ -57,8 +57,10 @@ btnLearnMore.addEventListener('click', () => {
 //   });
 // });
 
-//with event delegation(adding the event to the parent el)
-document.querySelector('.nav__links').addEventListener('click', function (e) {
+//with event delegation(adding event to the parent el instead of looping all over the el)
+const navContainer = document.querySelector('.nav__links');
+
+navContainer.addEventListener('click', function (e) {
   e.preventDefault();
   //matching strategy
   if (e.target.classList.contains('nav__link')) {
@@ -68,3 +70,25 @@ document.querySelector('.nav__links').addEventListener('click', function (e) {
   }
 });
 
+//tabbed component(with delegation)
+const tabs = document.querySelectorAll('.operations__tab');
+const tabContents = document.querySelectorAll('.operations__content');
+const tabContainer = document.querySelector('.operations__tab-container');
+
+tabContainer.addEventListener('click', function (e) {
+  const tabClicked = e.target.closest('.operations__tab');
+
+  //guard clause
+  if (!tabClicked) return;
+  //remove the active tabs and contents class
+  tabs.forEach(tab => tab.classList.remove('operations__tab--active'));
+  tabContents.forEach(content =>
+    content.classList.remove('operations__content--active')
+  );
+
+  //add active class (don't forget to remove the class first above)
+  tabClicked.classList.add('operations__tab--active');
+  document
+    .querySelector(`.operations__content--${tabClicked.dataset.tab}`)
+    .classList.add('operations__content--active');
+});

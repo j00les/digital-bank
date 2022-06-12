@@ -29,18 +29,42 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
+//learn more smooth scrolling ---
 const section1 = document.querySelector('#section--1');
 const btnLearnMore = document.querySelector('.btn--scroll-to');
-
-//smooth scrolling
-btnLearnMore.addEventListener('click', e => {
+btnLearnMore.addEventListener('click', () => {
   //get offset, coordinate and stuff
-  const sect1Coords = section1.getBoundingClientRect();
+  // const sect1Coords = section1.getBoundingClientRect();
 
   //scrollTo(x(left), y(top)) + window axes so it'll be relative to the window
-  window.scrollTo({
-    left: sect1Coords.left,
-    top: sect1Coords.top + window.scrollY,
-    behavior: "smooth"
-  });
+  // window.scrollTo({
+  //   left: sect1Coords.left,
+  //   top: sect1Coords.top + window.scrollY,
+  //   behavior: "smooth"
+  // });
+
+  //the easy way
+  section1.scrollIntoView({ behavior: 'smooth' });
 });
+
+//nav smooth scrolling ---
+// //looping over all element
+// document.querySelectorAll('.nav__link').forEach(el => {
+//   el.addEventListener('click', function(e) {
+//     e.preventDefault()
+//     const id = this.getAttribute('href')
+//     document.querySelector(id).scrollIntoView({behavior: 'smooth'})
+//   });
+// });
+
+//with event delegation(adding the event to the parent el)
+document.querySelector('.nav__links').addEventListener('click', function (e) {
+  e.preventDefault();
+  //matching strategy
+  if (e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href');
+    console.log(id);
+    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+  }
+});
+

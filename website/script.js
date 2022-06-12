@@ -18,8 +18,7 @@ const closeModal = function () {
   overlay.classList.add('hidden');
 };
 
-for (let i = 0; i < btnsOpenModal.length; i++)
-  btnsOpenModal[i].addEventListener('click', openModal);
+btnsOpenModal.forEach(btn => btn.addEventListener('click', openModal));
 
 btnCloseModal.addEventListener('click', closeModal);
 overlay.addEventListener('click', closeModal);
@@ -28,4 +27,20 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
     closeModal();
   }
+});
+
+const section1 = document.querySelector('#section--1');
+const btnLearnMore = document.querySelector('.btn--scroll-to');
+
+//smooth scrolling
+btnLearnMore.addEventListener('click', e => {
+  //get offset, coordinate and stuff
+  const sect1Coords = section1.getBoundingClientRect();
+
+  //scrollTo(x(left), y(top)) + window axes so it'll be relative to the window
+  window.scrollTo({
+    left: sect1Coords.left,
+    top: sect1Coords.top + window.scrollY,
+    behavior: "smooth"
+  });
 });

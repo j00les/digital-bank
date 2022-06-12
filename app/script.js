@@ -199,10 +199,6 @@ const logoutTimer = () => {
 
 let currentAccount, timer;
 
-// currentAccount = account1;
-// containerApp.style.opacity = 100;
-// updateUI(currentAccount);
-
 //display ui when logged in
 btnLogin.addEventListener('click', e => {
   e.preventDefault();

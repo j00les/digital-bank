@@ -8,6 +8,15 @@ const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 
+const tabs = document.querySelectorAll('.operations__tab');
+const tabContents = document.querySelectorAll('.operations__content');
+const tabContainer = document.querySelector('.operations__tab-container');
+
+const section1 = document.querySelector('#section--1');
+const btnLearnMore = document.querySelector('.btn--scroll-to');
+
+const navContainer = document.querySelector('.nav__links');
+
 const openModal = function () {
   modal.classList.remove('hidden');
   overlay.classList.remove('hidden');
@@ -30,8 +39,6 @@ document.addEventListener('keydown', function (e) {
 });
 
 //learn more smooth scrolling ---
-const section1 = document.querySelector('#section--1');
-const btnLearnMore = document.querySelector('.btn--scroll-to');
 btnLearnMore.addEventListener('click', () => {
   //get offset, coordinate and stuff
   // const sect1Coords = section1.getBoundingClientRect();
@@ -47,19 +54,7 @@ btnLearnMore.addEventListener('click', () => {
   section1.scrollIntoView({ behavior: 'smooth' });
 });
 
-//nav smooth scrolling ---
-// //looping over all element
-// document.querySelectorAll('.nav__link').forEach(el => {
-//   el.addEventListener('click', function(e) {
-//     e.preventDefault()
-//     const id = this.getAttribute('href')
-//     document.querySelector(id).scrollIntoView({behavior: 'smooth'})
-//   });
-// });
-
 //with event delegation(adding event to the parent el instead of looping all over the el)
-const navContainer = document.querySelector('.nav__links');
-
 navContainer.addEventListener('click', function (e) {
   e.preventDefault();
   //matching strategy
@@ -71,10 +66,6 @@ navContainer.addEventListener('click', function (e) {
 });
 
 //tabbed component(with delegation)
-const tabs = document.querySelectorAll('.operations__tab');
-const tabContents = document.querySelectorAll('.operations__content');
-const tabContainer = document.querySelector('.operations__tab-container');
-
 tabContainer.addEventListener('click', function (e) {
   const tabClicked = e.target.closest('.operations__tab');
 

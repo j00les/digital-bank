@@ -15,7 +15,8 @@ const tabContainer = document.querySelector('.operations__tab-container');
 const section1 = document.querySelector('#section--1');
 const btnLearnMore = document.querySelector('.btn--scroll-to');
 
-const navContainer = document.querySelector('.nav__links');
+const navContainer = document.querySelector('.nav');
+const linkContainer = document.querySelector('.nav__links');
 
 const openModal = function () {
   modal.classList.remove('hidden');
@@ -55,7 +56,7 @@ btnLearnMore.addEventListener('click', () => {
 });
 
 //with event delegation(adding event to the parent el instead of looping all over the el)
-navContainer.addEventListener('click', function (e) {
+linkContainer.addEventListener('click', function (e) {
   e.preventDefault();
   //matching strategy
   if (e.target.classList.contains('nav__link')) {
@@ -86,7 +87,6 @@ tabContainer.addEventListener('click', function (e) {
 });
 
 //nav animation
-const nav = document.querySelector('.nav');
 const handleOpacity = function (e) {
   if (e.target.classList.contains('nav__link')) {
     const link = e.target; //(this/the element we're working with)
@@ -102,6 +102,23 @@ const handleOpacity = function (e) {
   }
 };
 
-nav.addEventListener('mouseover', handleOpacity.bind(0.5));
+navContainer.addEventListener('mouseover', handleOpacity.bind(0.5));
+navContainer.addEventListener('mouseout', handleOpacity.bind(1));
 
-nav.addEventListener('mouseout', handleOpacity.bind(1));
+//sticky nav
+const header = document.querySelector('.header');
+const navHeight = navContainer.getBoundingClientRect().height;
+
+const stickyNav = function (entries) {
+  const [entry] = entries;
+  !entry.isIntersecting
+    ? navContainer.classList.add('sticky')
+    : navContainer.classList.remove('sticky');
+};
+
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null,
+  threshold: 0,
+  rootMargin: `-${navHeight}px`,
+});
+headerObserver.observe(header);

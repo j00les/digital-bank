@@ -68,7 +68,7 @@ const inputClosePin = document.querySelector('.form__input--pin');
 const inputTransferAmount = document.querySelector('.form__input--amount');
 
 const formatMovementDate = (date, locale) => {
-  //calculate passed days
+  //calculate days passed
   const calcDaysPassed = (date1, date2) =>
     Math.round(Math.abs((date2 - date1) / (1000 * 60 * 60 * 24)));
 

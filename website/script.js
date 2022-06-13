@@ -60,7 +60,7 @@ navContainer.addEventListener('click', function (e) {
   //matching strategy
   if (e.target.classList.contains('nav__link')) {
     const id = e.target.getAttribute('href');
-    console.log(id);
+
     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
   }
 });
@@ -71,6 +71,7 @@ tabContainer.addEventListener('click', function (e) {
 
   //guard clause
   if (!tabClicked) return;
+
   //remove the active tabs and contents class
   tabs.forEach(tab => tab.classList.remove('operations__tab--active'));
   tabContents.forEach(content =>
@@ -83,3 +84,24 @@ tabContainer.addEventListener('click', function (e) {
     .querySelector(`.operations__content--${tabClicked.dataset.tab}`)
     .classList.add('operations__content--active');
 });
+
+//nav animation
+const nav = document.querySelector('.nav');
+const handleOpacity = function (e) {
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target; //(this/the element we're working with)
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    const logo = link.closest('.nav').querySelector('img');
+
+    siblings.forEach(el => {
+      if (el !== link) {
+        el.style.opacity = this;
+      }
+    });
+    logo.style.opacity = this;
+  }
+};
+
+nav.addEventListener('mouseover', handleOpacity.bind(0.5));
+
+nav.addEventListener('mouseout', handleOpacity.bind(1));

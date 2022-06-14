@@ -118,31 +118,55 @@ const stickyNav = function (entries) {
 
 const headerObserver = new IntersectionObserver(stickyNav, {
   root: null,
-  threshold: 0, 
+  threshold: 0,
   rootMargin: `-${navHeight}px`,
 });
 headerObserver.observe(header);
 
 //reveal sections
-const allSections = document.querySelectorAll('.section')
+const allSections = document.querySelectorAll('.section');
 
-const revealSections = function(entries, observer) {
-  const [entry] = entries
+const revealSections = function (entries, observer) {
+  const [entry] = entries;
   console.log(entry);
 
   //guard clause
-  if(!entry.isIntersecting) return 
+  if (!entry.isIntersecting) return;
 
-  entry.target.classList.remove('section--hidden')
-  observer.unobserve(entry.target)
-}
+  entry.target.classList.remove('section--hidden');
+  observer.unobserve(entry.target);
+};
 
 const sectionObserver = new IntersectionObserver(revealSections, {
   root: null,
-  threshold: 0.15 //15 precent
-})
+  threshold: 0.15, //15 precent
+});
 
 allSections.forEach(section => {
-  sectionObserver.observe(section)
-  section.classList.add('section--hidden')
-})
+  sectionObserver.observe(section);
+  section.classList.add('section--hidden');
+});
+
+//lazy loading
+const imgTargets = document.querySelectorAll('img[data-src]');
+
+const loadImg = function (entries, observer) {
+  const [entry] = entries;
+
+  //guard clause
+  if (!entry.isIntersecting) return;
+
+  //replace img src with dataset src (look at the html)
+  entry.target.src = entry.target.dataset.src;
+
+  entry.target.classList.remove('lazy-img');
+  observer.unobserve(entry.target);
+};
+
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
+  rootMargin: '100px'
+});
+
+imgTargets.forEach(img => imgObserver.observe(img));

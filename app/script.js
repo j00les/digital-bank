@@ -320,3 +320,5 @@ btnSort.addEventListener('click', e => {
   calcDisplayMovements(currentAccount.movements, !sort);
   sort = !sort;
 });
+
+//done
